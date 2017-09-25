@@ -8,6 +8,39 @@ Vue.component('app-icon', {
     }
 });
 
+Vue.component('app-task', {
+    data: function () {
+        return {
+            editing: false,
+            draft: '',
+        };
+    },
+    template: '#task-template',
+    props: ['tasks', 'task', 'index'],
+    methods:  {
+        toggleStatus: function () {
+            this.task.pending = !this.task.pending;
+        },
+        edit: function () {
+            // this.tasks.forEach(function (task) {
+            //     task.editing = false;
+            // });
+            this.draft = this.task.description;
+            this.editing = true;
+        },
+        update: function () {
+            this.task.description = this.draft;
+            this.editing = false;
+        },
+        discard: function () {
+            this.editing = false;
+        },
+        remove: function () {
+            this.tasks.splice(this.index, 1);
+        },
+    }
+});
+
 var vm = new Vue({
     el: '#app',
     methods: {
@@ -20,29 +53,6 @@ var vm = new Vue({
 
             this.new_task = '';
         },
-        toggleStatus: function (task) {
-            task.pending = !task.pending;
-        },
-        editTask: function (task) {
-            this.tasks.forEach(function (task) {
-                task.editing = false;
-            });
-
-            this.draft = task.description;
-
-            task.editing = true;
-        },
-        updateTask: function (task) {
-            task.description = this.draft;
-
-            task.editing = false;
-        },
-        discardTask: function (task) {
-            task.editing = false;
-        },
-        deleteTask: function (index) {
-            this.tasks.splice(index, 1);
-        },
         deleteCompleted: function () {
             this.tasks = this.tasks.filter(function (task) {
                 return task.pending;
@@ -50,23 +60,19 @@ var vm = new Vue({
         }
     },
     data: {
-        draft: '',
         new_task: '',
         tasks: [
             {
                 description: 'Aprender Vue.js',
                 pending: true,
-                editing: false
             },
             {
                 description: 'Suscribirse a Styde.net',
                 pending: true,
-                editing: false
             },
             {
                 description: 'Grabar lección de Vue',
                 pending: false,
-                editing: false
             }
         ]
     }
